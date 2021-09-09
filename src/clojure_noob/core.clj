@@ -33,3 +33,18 @@
                    (sqrt-iter (improve guess x) x))))
 
 (def sqrt (fn [x] (sqrt-iter 1.0 x)))
+;=====1.8======
+(defn cube [x] (* x x x))
+
+(defn improve-cube [guess x]
+  (/ (+ (/ x (square guess)) (* 2 guess)) 3))
+
+(defn good-enough-cube? [guess x]
+  (< (abs (- (cube guess) x)) 0.001))
+
+(defn cube-iter [guess x]
+  (if (good-enough-cube? guess x)
+    guess
+    (cube-iter (improve-cube guess x) x)))
+
+(defn cube-sqrt [x] (cube-iter 1.0 x))
