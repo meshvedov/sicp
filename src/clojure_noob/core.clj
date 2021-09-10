@@ -8,7 +8,7 @@
 
 ;(def print-rat (fn [x] (printf "%s/%s" (numer x) (denom x))))
 (def square (fn [x] (* x x)))
-(def sum-square (fn [a b c] 
+(def sum-square (fn [a b c]
                   (if (> a b)
                     (+ (square (if (> b c) b c)) (square a))
                     (+ (square (if (> a c) a c)) (square b)))))
@@ -48,3 +48,19 @@
     (cube-iter (improve-cube guess x) x)))
 
 (defn cube-sqrt [x] (cube-iter 1.0 x))
+;====1.11=====
+(defn ff [n]
+  (cond (< n 3) n
+        (>= n 3) (+ (ff (- n 1)) (ff (- n 2)) (ff (- n 3)))))
+
+(defn fff [n]
+  (fff-iter (- n 1) (- n 2) (- n 3) 0 n))
+
+(defn fff-iter [a b c acc counter]
+  (if (< a 2)
+    acc
+    (fff-iter (- a 1) (- b 2) (- c 3) (+ acc
+                                         (if (< a 3) a 0)
+                                         (if (< b 3) b 0)
+                                         (if (< c 3) c 0)) (- counter 1))))
+

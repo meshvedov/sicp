@@ -7,4 +7,5 @@
   :main ^:skip-aot clojure-noob.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
+                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}
+  :plugin [[cider/cider-nrepl "0.24.0"]])
