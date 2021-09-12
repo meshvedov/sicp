@@ -53,14 +53,28 @@
   (cond (< n 3) n
         (>= n 3) (+ (ff (- n 1)) (ff (- n 2)) (ff (- n 3)))))
 
-(defn fff [n]
-  (fff-iter (- n 1) (- n 2) (- n 3) 0 n))
+(defn f-iter
+  ([n] (if (< n 3)
+         n
+         (f-iter n 3 2 1 0)))
+  ([m n fn1 fn2 fn3] (if (= m n)
+                       (+ fn1 fn2 fn3)
+                       (f-iter m
+                               (+ n 1)
+                               (+ fn1 fn2 fn3)
+                               fn1
+                               fn2))))
+;======1.16=================
+(defn power
+  ([b n] (power b n 1))
+  ([b n a] (cond (= n 0) a
+             (even? n) (recur (*' b b) (/ n 2) a)
+             :else (recur b (- n 1) (*' a b)))))
 
-(defn fff-iter [a b c acc counter]
-  (if (< a 2)
-    acc
-    (fff-iter (- a 1) (- b 2) (- c 3) (+ acc
-                                         (if (< a 3) a 0)
-                                         (if (< b 3) b 0)
-                                         (if (< c 3) c 0)) (- counter 1))))
-
+;===========================
+;=====1.17========
+(defn mul
+  ([a b] (mul a b 0))
+  ([a b acc] (if (= b 0)
+             a
+             (mul a (- b 1) (+ a acc)))))
