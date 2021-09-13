@@ -75,7 +75,26 @@
 ;=====1.17========
 (defn mul
   ([a b] (mul a b 0))
-  ([a b acc] (if (= b 0)
-             acc
-             (mul a (- b 1) (+ a acc)))))
+  ([a b acc] (cond (= b 0) acc
+                     (even? b) (mul a (/ b 2) (+ acc (* a (/ b 2))))
+                     :else  (mul a (- b 1) (+ a acc)))))
+(mul 137 17)
+             
+
+(defn mul-fast [a b]
+  (cond (= b 0) 0
+        (even? b) (* 2 (mul-fast a (/ b 2)))
+        :else (+ a (mul-fast a (- b 1)))))
+(mul-fast 2 10)
+;===========================
+;==========1.29=============
+(defn sum [term a next b]
+  (if (> a b)
+    0
+    (+ (term a)
+       (sum term (next a) next b))))
+(defn cube [x] (* x x x))
+
+
+
 
