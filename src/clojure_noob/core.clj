@@ -76,5 +76,6 @@
 (defn mul
   ([a b] (mul a b 0))
   ([a b acc] (if (= b 0)
-             a
+             acc
              (mul a (- b 1) (+ a acc)))))
+
