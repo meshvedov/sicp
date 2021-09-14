@@ -93,8 +93,23 @@
     0
     (+ (term a)
        (sum term (next a) next b))))
-(defn cube [x] (* x x x))
 
+(defn next [point] (+ point 1))
 
+(defn integral [f a b dx]
+  (let [add-dx (fn [x] (+ x dx))]
+    (* (sum f (+ a (/ dx 2)) add-dx b)
+       dx)))
 
+(integral cube 0 1 0.01)
 
+(defn integral-simps [f a b n]
+  (let [y (fn [x] (cond (= n 0) x
+                       (even? n) (* 2 x)
+                        :else (* 4 x)))
+        h (/ (- b a) n)
+        add-n (fn [x] (+ x 1))] 
+  (* (sum f (+ a (* n h)) add-n b)
+     (/ h 3))))
+
+(integral-simps cube 0 1 100)
