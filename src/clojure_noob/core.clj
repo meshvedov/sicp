@@ -68,18 +68,17 @@
 (defn power
   ([b n] (power b n 1))
   ([b n a] (cond (= n 0) a
-             (even? n) (recur (*' b b) (/ n 2) a)
-             :else (recur b (- n 1) (*' a b)))))
+                 (even? n) (recur (*' b b) (/ n 2) a)
+                 :else (recur b (- n 1) (*' a b)))))
 
 ;===========================
 ;=====1.17========
 (defn mul
   ([a b] (mul a b 0))
   ([a b acc] (cond (= b 0) acc
-                     (even? b) (mul a (/ b 2) (+ acc (* a (/ b 2))))
-                     :else  (mul a (- b 1) (+ a acc)))))
+                   (even? b) (mul a (/ b 2) (+ acc (* a (/ b 2))))
+                   :else  (mul a (- b 1) (+ a acc)))))
 (mul 137 17)
-             
 
 (defn mul-fast [a b]
   (cond (= b 0) 0
@@ -94,7 +93,11 @@
     (+ (term a)
        (sum term (next a) next b))))
 
-(defn next [point] (+ point 1))
+(defn sum-iter [term a next b]
+  (let [iter (fn [a res] (if (> a b)
+                           res
+                           (recur (next a) (+ res (term a)))))]
+    (iter a 0)))
 
 (defn integral [f a b dx]
   (let [add-dx (fn [x] (+ x dx))]
@@ -104,12 +107,13 @@
 (integral cube 0 1 0.01)
 
 (defn integral-simps [f a b n]
-  (let [y (fn [x] (cond (= n 0) x
-                       (even? n) (* 2 x)
-                        :else (* 4 x)))
-        h (/ (- b a) n)
-        add-n (fn [x] (+ x 1))] 
-  (* (sum f (+ a (* n h)) add-n b)
-     (/ h 3))))
+  (let [h (/ (- b a) n)
+        y (fn [k] (* (f (+ a (* k h))) (cond (= k 0) 1
+                                             (= k n) 1
+                                             (even? k) 2
+                                             :else 4)))
+        add-n (fn [x] (+ x 1))]
+    (* (sum-iter y 0 add-n n)
+       (/ h 3))))
 
 (integral-simps cube 0 1 100)
