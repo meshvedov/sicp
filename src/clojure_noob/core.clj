@@ -117,3 +117,64 @@
        (/ h 3))))
 
 (integral-simps cube 0 1 100)
+;======1.31==============
+(defn product [term a next b]
+  (if (= a b)
+    (term b)
+    (* (term a) (product term (next a) next b))))
+
+(defn fibonaci [n]
+  (let [idn (fn [x] x)
+        next (fn [x] (+ x 1))]
+  (product idn 1 next n)))
+
+(fibonaci 5)
+
+;(defn pi-numer [a b]
+;  (let [term (fn [x] (* x x))
+;        next (fn [x] (+ x 2))]
+;    (product term a next b)))
+
+;(defn pi [n] 
+;  (* 4.0 (/ (* (/ 2 n) (pi-numer 4 n)) (pi-numer 3 (- n 1)))))
+
+;(pi 20)
+(defn pi2 [precision]
+  (let [enumerator (fn [index] (cond (even? index) (+ index 2.0)
+                                     :else (+ index 1.0)))
+        denominator (fn [index] (cond (even? index) (+ index 1.0)
+                                      :else (+ index 2.0)))
+        fraction (fn [index] (/ (enumerator index) (denominator index)))]
+    (* 4 (product fraction 1 inc precision))))
+(pi2 1280)
+;==================1.32============
+(defn accumulate [combiner null-value term a next b]
+  (let [iter (fn [a result] 
+               (if (= a b)
+                 (combiner (term a) result)
+                 (recur (next a) (combiner (term a) result))))]
+    (iter a null-value)))
+
+(defn accumulate-iter [combiner null-value term a next b]
+  (defn iter [a result]
+               (if (= a b)
+                 (combiner (term a) result)
+                 (combiner (iter (next a) (term a)) result)))
+    (iter a null-value))
+
+(defn product32 [term a next b]
+  (accumulate-iter * 1 term a next b))
+(product32 identity 1 inc 10)
+
+(defn sum32 [term a next b]
+  (accumulate-iter + 0 term a next b))
+(sum32 identity 0 inc 10)
+;========================================
+;============1.33=====================
+(defn filtered-accumulate [combiner null-value term a next b filter]
+  (defn iter [a result]
+   (if (= a b)
+    (combiner (if (filter a) (term a) null-value) result)
+    (iter (next a) (combiner (if (filter a) (term a) null-value) result))))
+  (iter a null-value))
+;======================================
