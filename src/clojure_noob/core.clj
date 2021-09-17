@@ -178,3 +178,51 @@
     (iter (next a) (combiner (if (filter a) (term a) null-value) result))))
   (iter a null-value))
 ;======================================
+;==============1.35====================
+(defn fixed-point [f first-guess]
+  (def tolerance 0.00001)
+  (def close-enough? (fn [v1 v2] (< (abs (- v1 v2)) tolerance)))
+  (def try! (fn [guess] 
+             (let [next (f guess)]
+               (if (close-enough? guess next)
+                 next
+                 (try! next)))))
+   (try! first-guess))
+
+(fixed-point (fn [x] (+ 1 (/ 1 x))) 1.0) 
+;==========1.37=========
+(defn cont-frac [n d k]
+  (let [next (fn next [step]
+               (if (< step k)
+                 (/ (n step) (+ (d step) (next (+ step 1))))
+                 0))]
+    (next 1)))
+
+(/ 1 (cont-frac (fn [x] 1.0) (fn [x] 1.0) 14))
+
+(defn cont-frac-iter [n d k]
+  (let [next (fn next [step acc]
+               (if (= step k)
+                 acc
+                 (next (+ step 1) (/ (n step) (+ (d step) acc)))))]
+    (next 0 (/ (n 1) (d 1)))))
+    
+(/ 1 (cont-frac-iter (fn [_] 1.0) (fn [_] 1.0) 14))
+;========1.40=======================
+(def dx 0.00001)
+
+(defn deriv [g]
+  (fn [x] (/ (- (g (+ x dx)) (g x)) dx)))
+
+(defn newton-transform [g]
+  (fn [x] (- x (/ (g x) ((deriv g) x)))))
+
+(defn newtons-method [g guess]
+  (fixed-point (newton-transform g) guess))
+
+(defn cubic [a b c]
+  (fn [x] (+ (cube x) (* a (square x) (* b x) c))))
+
+(newtons-method (cubic a b c) 1.0)
+
+
