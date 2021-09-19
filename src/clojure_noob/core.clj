@@ -135,7 +135,7 @@
 ;        next (fn [x] (+ x 2))]
 ;    (product term a next b)))
 
-;(defn pi [n] 
+;(defn pi [n]
 ;  (* 4.0 (/ (* (/ 2 n) (pi-numer 4 n)) (pi-numer 3 (- n 1)))))
 
 ;(pi 20)
@@ -149,7 +149,7 @@
 (pi2 1280)
 ;==================1.32============
 (defn accumulate [combiner null-value term a next b]
-  (let [iter (fn [a result] 
+  (let [iter (fn [a result]
                (if (= a b)
                  (combiner (term a) result)
                  (recur (next a) (combiner (term a) result))))]
@@ -182,14 +182,14 @@
 (defn fixed-point [f first-guess]
   (def tolerance 0.00001)
   (def close-enough? (fn [v1 v2] (< (abs (- v1 v2)) tolerance)))
-  (def try! (fn [guess] 
+  (def try! (fn [guess]
              (let [next (f guess)]
                (if (close-enough? guess next)
                  next
                  (try! next)))))
    (try! first-guess))
 
-(fixed-point (fn [x] (+ 1 (/ 1 x))) 1.0) 
+(fixed-point (fn [x] (+ 1 (/ 1 x))) 1.0)
 ;==========1.37=========
 (defn cont-frac [n d k]
   (let [next (fn next [step]
@@ -206,7 +206,7 @@
                  acc
                  (next (+ step 1) (/ (n step) (+ (d step) acc)))))]
     (next 0 (/ (n 1) (d 1)))))
-    
+
 (/ 1 (cont-frac-iter (fn [_] 1.0) (fn [_] 1.0) 14))
 ;========1.40=======================
 (def dx 0.00001)
@@ -223,6 +223,27 @@
 (defn cubic [a b c]
   (fn [x] (+ (cube x) (* a (square x) (* b x) c))))
 
-(newtons-method (cubic a b c) 1.0)
+(newtons-method (cubic 5 3 1) 1.0)
+;=======1.41===================
+(defn double [g]
+  (fn [x] (g (g x))))
 
+((double inc) 1)
+(((double (double double)) inc) 5)
+;=======1.42==============
+(defn compose [f g]
+  (fn [x] (f (g x))))
 
+((compose square inc) 6)
+;=======1.43=============
+(defn repeated [g n]
+  (let [iter (fn iter [n acc]
+               (if (= n 1)
+                 acc
+                 (iter (- n 1) (compose acc g))))]
+    (iter n g)))
+
+((repeated square 1) 5)
+((repeated square 2) 5)
+((repeated square 3) 5)
+((repeated square 4) 5)
