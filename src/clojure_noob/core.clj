@@ -247,3 +247,36 @@
 ((repeated square 2) 5)
 ((repeated square 3) 5)
 ((repeated square 4) 5)
+;;;===========================
+;========2.2==============
+(defn x-point [point] (first point))
+(defn y-point [point] (first (rest point)))
+
+(defn make-point [x y] (list x y))
+
+(defn make-segment [p1 p2] (list p1 p2))
+
+(defn start-segment [seg] (first seg))
+(defn end-segment [seg] (first (rest seg)))
+
+(defn midpoint-segment [seg] 
+  (let [x1 (x-point (start-segment seg))
+        x2 (x-point (end-segment seg))
+        y1 (y-point (start-segment seg))
+        y2 (y-point (end-segment seg))]
+    (make-point (/ (+ x1 x2) 2) (/ (+ y1 y2) 2))))
+
+
+(midpoint-segment (list '(1 0) '(0 1)))
+;=========2.3===========================
+(defn make-rect [x1 y1 x2 y2]
+  (let [p1 (make-point x1 y1)
+        p2 (make-point x1 y2)
+        p3 (make-point x2 y2)
+        p4 (make-point x2 y1)
+        seg1 (make-segment p1 p4)
+        seg2 (make-segment p1 p2)]
+    (list seg1 seg2)))
+
+                       
+
