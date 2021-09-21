@@ -277,6 +277,51 @@
         seg1 (make-segment p1 p4)
         seg2 (make-segment p1 p2)]
     (list seg1 seg2)))
+;========2.4===========
+(defn cons [x y]
+  (fn [m] (m x y)))
 
+(defn car [z]
+  (z (fn [p q] p)))
                        
+(defn cdr [z]
+  (z (fn [p q] q)))
+
+(car (cons 1 3))
+(cdr (cons 'a 'b))
+
+;====================2.6==================
+(defn zero [f] (fn [x] x))
+
+(defn add-1 [n] (fn [f] (fn [x] (f ((n f) x)))))
+
+(defn one [] (fn [f] (fn [x] (f x))))
+;===============2.7======================
+(defn make-interval [a b] (list a b))
+
+(defn lower-bound [interval] (min (first interval) (first (rest interval))))
+
+(defn upper-bound [interval] (max (first interval) (first (rest interval))))
+
+(defn add-interval [x y]
+  (make-interval (+ (lower-bound x) (lower-bound y))
+                 (+ (upper-bound x) (upper-bound y))))
+
+(defn mul-interval [x y] 
+  (let [p1 (* (lower-bound x) (lower-bound y))
+        p2 (* (lower-bound x) (upper-bound y))
+        p3 (* (upper-bound x) (lower-bound y))
+        p4 (* (upper-bound x) (upper-bound y))]
+    (make-interval (min p1 p2 p3 p4) (max p1 p2 p3 p4))))
+
+(defn div-interval [x y] 
+  (when (and (< (lower-bound y) 0) (> (upper-bound y 0)))
+    (println "Error interval")
+  (mul-interval x
+                (make-interval (/ 1.0 (upper-bound y))
+                               (/ 1.0 (lower-bound y)))))
+
+(defn sub-interval [a b]
+  (make-interval (- (upper-bound a) (lower-bound b))
+                 (- (lower-bound a) (upper-bound b))))
 
