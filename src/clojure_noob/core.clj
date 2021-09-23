@@ -315,13 +315,39 @@
     (make-interval (min p1 p2 p3 p4) (max p1 p2 p3 p4))))
 
 (defn div-interval [x y] 
-  (when (and (< (lower-bound y) 0) (> (upper-bound y 0)))
+  (when (and (< (lower-bound y) 0) (> (upper-bound y) 0))
     (println "Error interval")
-  (mul-interval x
-                (make-interval (/ 1.0 (upper-bound y))
-                               (/ 1.0 (lower-bound y)))))
+    (mul-interval x
+                  (make-interval (/ 1.0 (upper-bound y))
+                                 (/ 1.0 (lower-bound y))))))
 
 (defn sub-interval [a b]
   (make-interval (- (upper-bound a) (lower-bound b))
                  (- (lower-bound a) (upper-bound b))))
 
+;=====================2.12==============
+(defn center [i]
+  (/ (+ (lower-bound i) (upper-bound i)) 2))
+
+
+(defn make-center-percent [center percent]
+  (let [delta (* center (/ percent 100))]
+    (make-interval (+ center delta) (- center delta))))
+;============2.17============
+(defn last-pair [l]
+  (defn last-pair-iter [l acc]
+    (if (empty? l)
+      acc
+      (last-pair-iter (rest l) (first l))))
+  (last-pair-iter l (first l)))
+
+(last-pair (list 23 72 149 34))
+;==========2.18===============
+(defn reverse-cust [l]
+  (defn reverse-cust-iter [l acc]
+    (if (empty? l)
+      (flatten acc)
+      (reverse-cust-iter (rest l) (list (first l) acc))))
+  (reverse-cust-iter (rest l) (first l)))
+
+(reverse-cust (list 1 4 9 16 25))
