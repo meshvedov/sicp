@@ -351,3 +351,20 @@
   (reverse-cust-iter (rest l) (first l)))
 
 (reverse-cust (list 1 4 9 16 25))
+
+;===================================
+(defn map-cust [proc items]
+  (if (empty? items)
+    nil
+    (conj (map proc (rest items)) (proc (first items)))))
+
+(map-cust (fn [x] (* x x)) (list 1 2 3 4))
+
+;----------------------------------
+(defn count-leaves [x]
+  (cond (empty? x) 0
+        (not (list? x)) 1
+        :default (+ (count-leaves (first x))
+                 (count-leaves (rest x)))))
+
+(count-leaves (list 1 (list 2 3)))
